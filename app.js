@@ -63,7 +63,8 @@ async function loadFiles() {
 
    // ⛔ 
   if (!albumId || albumId === "") {
-    query = query.neq("album_id", "71dd9b79-c381-40d6-b8b7-b7fe183db609"); // Hanya menyembunyikan album "yab"
+    query = query.neq("album_id", "71dd9b79-c381-40d6-b8b7-b7fe183db609"); 
+    query = query.neq("album_id", "9ecd8ffe-36a6-45b5-8849-994a4fbf20cd"); 
   } else {
     query = query.eq("album_id", albumId); // Jika ada album dipilih, hanya tampilkan album tersebut
   }
@@ -100,22 +101,18 @@ async function loadFiles() {
           ${previewElement}
           <span class="text-white font-medium truncate w-full text-center">${file.nama_file}</span>
         </div>
-        <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-5 bg-white bg-opacity-50 backdrop-blur-sm p-2 rounded-lg">
-          <a href="${customPublicUrl}" target="_blank" class="text-gray-800 hover:text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </a>
-          <button onclick="deleteFile('${file.id}', '${file.file_path}')" class="text-red-500 hover:text-red-700">
+        <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-5 bg-white bg-opacity-50 backdrop-blur-sm p-2 rounded-full">
+        <button onclick="deleteFile('${file.id}', '${file.file_path}')" class="text-red-500 hover:text-red-700">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <button onclick="moveToAlbum('${file.id}')" class="text-blue-500 hover:text-blue-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M10 12l2-2m0 0l2 2m-2-2v6" />
-            </svg>
+          <button onclick="moveToAlbum('${file.id}')" class="text-blue-500 pr-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5"><path d="m11,9h4v2h-4v4h-2v-4h-4v-2h4v-4h2v4Zm13-2v17H4v-4H0V3C0,1.346,1.346,0,3,0h14c1.654,0,3,1.346,3,3v1h1c1.654,0,3,1.346,3,3ZM2,18h16V3c0-.551-.449-1-1-1H3c-.551,0-1,.449-1,1v15ZM22,7c0-.551-.449-1-1-1h-1v14H6v2h16V7Z"/></svg>
           </button>
+          <a href="${customPublicUrl}" target="_blank" class="pr-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-4"><path d="M20,11v8c0,2.757-2.243,5-5,5H5c-2.757,0-5-2.243-5-5V9c0-2.757,2.243-5,5-5H13c.552,0,1,.448,1,1s-.448,1-1,1H5c-1.654,0-3,1.346-3,3v10c0,1.654,1.346,3,3,3H15c1.654,0,3-1.346,3-3V11c0-.552,.448-1,1-1s1,.448,1,1ZM21,0h-7c-.552,0-1,.448-1,1s.448,1,1,1h6.586L8.293,14.293c-.391,.391-.391,1.023,0,1.414,.195,.195,.451,.293,.707,.293s.512-.098,.707-.293L22,3.414v6.586c0,.552,.448,1,1,1s1-.448,1-1V3c0-1.654-1.346-3-3-3Z"/></svg>
+          </a>
         </div>
       </div>
     `;
