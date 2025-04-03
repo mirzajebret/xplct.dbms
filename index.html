@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DBMS Sederhana</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-800 text-white flex flex-col items-center min-h-screen">
+<!-- Pilih Album -->
+  <div class="bg-gray-700 shadow-lg p-3 rounded-bl-xl w-full flex items-center px-5 justify-between fixed text-xs z-[1000]">
+    <select id="albumSelect" class="bg-gray-600 text-white p-2 rounded-lg w-3/4 md:w-[90%] lg:w-[90%]">
+      <option value="">All Images</option>
+    </select>
+    <button id="addAlbumBtn" class="bg-blue-500 px-3 py-2 rounded-lg ">+ Album</button>
+  </div>
+
+<!-- Daftar File -->
+  <div class="bg-gray-800 p-5 w-full max-w-lg mt-16 mb-10">
+    <ul id="fileList" class="space-y-2"></ul>
+  </div>
+
+<!-- Form Tambah Album -->
+<div id="albumModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 hidden z-50">
+  <div class="bg-gray-800 rounded-lg p-4 w-96 text-xs">
+    <input type="text" id="albumNameInput" placeholder="Nama Album" class="w-full p-2 bg-gray-700 text-white rounded">
+    <div class="flex justify-end gap-2 mt-3">
+      <button id="cancelAlbumBtn" class="bg-gray-600 px-3 py-2 rounded">Batal</button>
+      <button id="saveAlbumBtn" class="bg-green-500 px-3 py-2 rounded">Simpan</button>
+    </div>
+  </div>
+</div>
+
+  <!-- Modal PDF Viewer -->
+  <div id="pdfModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 hidden z-50">
+    <div class="bg-gray-800 rounded-lg shadow-lg max-w-4xl w-full h-[80%] relative border border-gray-700">
+      <button id="closePdfModal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold">✖️</button>
+      <iframe id="pdfViewer" src="" class="w-full h-full rounded-b-lg"></iframe>
+    </div>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg  fixed bottom-0 w-full text-xs">
+    <!-- Toggle Button -->
+    <button id="toggleUploadSection" class=" w-full bg-gray-700 text-white py-3 rounded-t-xl text-sm transition flex justify-center items-center">
+      <span id="toggleArrow">upload ▼</span>
+    </button>
+    
+    <!-- Upload Form -->
+    <div id="uploadSection" class="p-6 space-y-4 hidden max-w-lg mx-auto">
+      <form id="uploadForm" class="space-y-4">
+        <div>
+          <input type="text" id="namaFile" placeholder="Masukkan nama file" class="border border-gray-600 bg-gray-700 p-2 w-full rounded-t-lg text-white"/>
+          <select id="uploadAlbumSelect" class="w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-b-lg ">
+            <option value="">All Images</option>
+          </select>
+        </div>
+
+        <div>
+          <input type="file" id="fileInput" multiple class="border border-gray-600 bg-gray-700 p-2 w-full rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white" required />
+        </div>
+
+        <div class="w-full bg-gray-700 rounded-full h-4 mb-4">
+          <div id="progressBar" class="bg-purple-500 h-4 rounded-full w-0 transition-all"></div>
+        </div>
+
+        <button type="submit" class="w-full text-sm bg-purple-600 text-white font-semibold py-2 rounded-lg hover:bg-purple-700 transition">Upload</button>
+      </form>
+    </div>
+  </div>
+
+  <button id="toggleViewBtn" class="bg-amber-600 rounded-b-full px-3 py-2 text-white fixed top-[55px] right-0 shadow-lg">◫
+  </button>
+
+
+<!-- Album Selection Modal -->
+<div id="albumSelectionModal" class="hidden fixed inset-0 text-xs flex justify-center items-center">
+  <div class="bg-white bg-opacity-70 backdrop-blur-sm rounded-lg p-4 pb-4 w-96 border border-white">
+    <div class="flex items-center justify-between">
+      <button id="closeAlbumModal" type="button" class="end-2.5 text-black text-sm h-8 ms-auto inline-flex justify-center items-center">
+        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+        </svg>
+      </button>
+    </div>
+    <div class="col-span-2 sm:col-span-1">
+      <label for="albumDropdown" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Move to</label>
+      <select id="albumDropdown" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+        <option selected="">Select Album</option>
+      </select>
+    </div>
+    <button id="moveToSelectedAlbum" class="mt-2 bg-black text-white py-3 rounded w-full">Move</button>
+  </div>
+</div>
+  <!-- Supabase JS v1 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
+  <!-- App.js -->
+  <script src="app.js"></script>
+  
+  <script>
+    // Toggle functionality for the upload section
+    const toggleButton = document.getElementById('toggleUploadSection');
+    const uploadSection = document.getElementById('uploadSection');
+    const toggleArrow = document.getElementById('toggleArrow');
+
+    toggleButton.addEventListener('click', () => {
+      const isHidden = uploadSection.classList.toggle('hidden');
+      toggleArrow.textContent = isHidden ? 'upload ▼' : 'upload a file';
+    });
+  </script>
+</body>
+</html>
