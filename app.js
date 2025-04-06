@@ -13,6 +13,14 @@ const albumNameInput = document.getElementById("albumNameInput");
 const uploadForm = document.getElementById('uploadForm');
 const toggleViewBtn = document.getElementById('toggleViewBtn');
 
+const passwordModal = document.getElementById("passwordModal");
+const passwordInput = document.getElementById("passwordInput");
+const cancelPasswordBtn = document.getElementById("cancelPasswordBtn");
+const submitPasswordBtn = document.getElementById("submitPasswordBtn");
+
+const restrictedAlbums = ["Yab", "Cosplay"];
+const correctPassword = "miebaso354";
+
 async function loadAlbums() {
   const { data, error } = await supabase.from("albums").select("*").order("tanggal_buat", { ascending: false });
   if (error) {
@@ -30,7 +38,47 @@ async function loadAlbums() {
   });
 }
 
-albumSelect.addEventListener("change", loadFiles);
+albumSelect.addEventListener("change", async () => {
+  const selectedAlbumId = albumSelect.value;
+
+  // Fetch album details to check if it's restricted
+  const { data: album, error } = await supabase
+    .from("albums")
+    .select("*")
+    .eq("id", selectedAlbumId)
+    .single();
+
+  if (error) {
+    console.error("Gagal mengambil detail album:", error);
+    return;
+  }
+
+  if (restrictedAlbums.includes(album.nama_album)) {
+    // Show password modal
+    passwordModal.classList.remove("hidden");
+
+    // Handle password submission
+    submitPasswordBtn.onclick = () => {
+      const enteredPassword = passwordInput.value.trim();
+      if (enteredPassword === correctPassword) {
+        passwordModal.classList.add("hidden");
+        passwordInput.value = "";
+        loadFiles(); // Load files for the selected album
+      } else {
+        alert("Kata sandi salah!");
+      }
+    };
+
+    // Handle cancel button
+    cancelPasswordBtn.onclick = () => {
+      passwordModal.classList.add("hidden");
+      passwordInput.value = "";
+      albumSelect.value = ""; // Reset album selection
+    };
+  } else {
+    loadFiles(); // Load files for unrestricted albums
+  }
+});
 
 addAlbumBtn.addEventListener("click", () => albumModal.classList.remove("hidden"));
 cancelAlbumBtn.addEventListener("click", () => albumModal.classList.add("hidden"));
