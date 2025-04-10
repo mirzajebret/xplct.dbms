@@ -416,6 +416,7 @@ async function uploadFile(file, namaFile, albumId, progressBar) {
       console.error('Gagal menghapus file orphan:', deleteError);
       alert('Gagal menghapus sebagian/seluruh file orphan.');
     } else {
+            console.log('File orphan yang akan dihapus:', orphanFiles);
       alert(`${orphanFiles.length} file orphan berhasil dihapus.`);
     }
   });
