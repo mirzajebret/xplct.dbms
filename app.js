@@ -371,56 +371,7 @@ async function uploadFile(file, namaFile, albumId, progressBar) {
       xhr.send(file);
   });
 }
-// HAPUS ORPHAN
- document.getElementById('hapusOrphanBtn').addEventListener('click', async () => {
-    const { data: files, error } = await supabase
-      .storage
-      .from('dokumen')
-      .list('', { limit: 1000 });
 
-    if (error) {
-      console.error('Gagal mengambil daftar file:', error);
-      return;
-    }
-
-    let orphanFiles = [];
-
-    for (const file of files) {
-      const fullPath = `dokumen/${file.name}`;
-      const { data: exists, error: checkError } = await supabase
-        .from('dokumen_files')
-        .select('id')
-        .eq('file_path', fullPath);
-
-      if (checkError) {
-        console.error('Gagal memeriksa file:', file.name, checkError);
-        continue;
-      }
-
-      if (!exists || exists.length === 0) {
-        orphanFiles.push(file.name);
-      }
-    }
-
-    if (orphanFiles.length === 0) {
-      alert('Tidak ada file orphan untuk dihapus.');
-      return;
-    }
-
-    const { error: deleteError } = await supabase
-      .storage
-      .from('dokumen')
-      .remove(orphanFiles);
-
-    if (deleteError) {
-      console.error('Gagal menghapus file orphan:', deleteError);
-      alert('Gagal menghapus sebagian/seluruh file orphan.');
-    } else {
-            console.log('File orphan yang akan dihapus:', orphanFiles);
-      alert(`${orphanFiles.length} file orphan berhasil dihapus.`);
-    }
-  });
-// HAPUS ORPHAN
 
   toggleViewBtn.addEventListener('click', () => {
     isGridView = !isGridView;
