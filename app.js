@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://mkaqtowoyddwftmqlhor.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXF0b3dveWRkd2Z0bXFsaG9yIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MjUyMzYxOSwiZXhwIjoyMDU4MDk5NjE5fQ.zDdXn-Y55yKdn4hyljlGPKamLEl4DGOUzYhbMfqv9W0';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXF0b3dveWRkd2Z0bXFsaG9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI1MjM2MTksImV4cCI6MjA1ODA5OTYxOX0.vTvxyrbz2Bag3SN05wnRaVuaRDLu1oMCEwoJUK5ad38';
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const albumSelect = document.getElementById("albumSelect");
