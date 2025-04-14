@@ -295,8 +295,6 @@ async function moveToAlbum(fileId) {
       return;
     }
 
-    alert("File berhasil dipindahkan ke album!");
-    modal.classList.add("hidden"); // Close the modal
     loadFiles(); // Reload the file list to reflect the changes
   };
 
