@@ -132,7 +132,7 @@ async function loadFiles() {
     li.className = 'flex flex-col md:flex-row justify-between items-start md:items-end  gap-2';
     const filePath = file.file_path;
     const fileExt = filePath.split('.').pop().toLowerCase();
-    const customPublicUrl = `${SUPABASE_URL}/storage/v1/object/public/${file.file_path}`;
+    const customPublicUrl = `${SUPABASE_URL}/storage/v1/object/public/dokumen/${file.file_path}`;
     let previewElement = '';
 
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExt)) {
@@ -209,13 +209,16 @@ function closePreview() {
 async function deleteFile(fileId, filePath) {
   const confirmed = confirm('Yakin mau hapus file ini?');
   if (!confirmed) return;
+
+  console.log("Path yang AKAN dihapus:", filePath);
+
   const { error: deleteStorageError } = await supabase
     .storage
-    .from('dokumen')
-    .remove([filePath]);
+    .from('dokumen') // bucket name
+    .remove([filePath]); // gunakan path apa adanya, TANPA edit, TANPA strip
 
   if (deleteStorageError) {
-    console.error('Gagal hapus file dari storage:', deleteStorageError);
+    console.error('❌ Gagal hapus file dari storage:', deleteStorageError);
     alert('Gagal hapus file dari storage!');
     return;
   }
@@ -226,14 +229,16 @@ async function deleteFile(fileId, filePath) {
     .eq('id', fileId);
 
   if (deleteDbError) {
-    console.error('Gagal hapus data dari database:', deleteDbError);
+    console.error('❌ Gagal hapus data dari database:', deleteDbError);
     alert('Gagal hapus data dari database!');
     return;
   }
 
-  alert('File berhasil dihapus!');
+  alert('✅ File berhasil dihapus!');
   loadFiles();
 }
+
+
 
 async function moveToAlbum(fileId) {
   const modal = document.getElementById("albumSelectionModal");
@@ -325,7 +330,7 @@ uploadForm.addEventListener('submit', async (e) => {
 
 async function uploadFile(file, namaFile, albumId, progressBar) {
   const fileExt = file.name.split('.').pop();
-  const filePath = `${Date.now()}_${file.name}`;
+const filePath = `${Date.now()}_${file.name}`; 
 
   const formData = new FormData();
   formData.append('cacheControl', '3600');
@@ -348,7 +353,7 @@ async function uploadFile(file, namaFile, albumId, progressBar) {
       xhr.onload = async () => {
           if (xhr.status === 200 || xhr.status === 201) {
               const { error: dbError } = await supabase.from("dokumen_files").insert([
-                  { nama_file: namaFile, file_path: `dokumen/${filePath}`, album_id: albumId || null }
+                  { nama_file: namaFile, file_path: `${filePath}`, album_id: albumId || null }
               ]);
               if (dbError) {
                   alert("Gagal simpan data!");
