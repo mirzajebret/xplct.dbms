@@ -294,7 +294,7 @@ async function moveToAlbum(fileId) {
       alert("Gagal memindahkan file ke album!");
       return;
     }
-
+    modal.classList.add("hidden"); // Close the modal
     loadFiles(); // Reload the file list to reflect the changes
   };
 
