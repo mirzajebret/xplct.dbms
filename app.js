@@ -28,8 +28,11 @@ async function loadAlbums() {
     return;
   }
   
-  albumSelect.innerHTML = `<option value="">All Images</option>`;
-  uploadAlbumSelect.innerHTML = `<option value="">All Images</option>`;
+  const mixedAlbum = data.find(album => album.nama_album === "Mixed");
+  const mixedAlbumId = mixedAlbum ? mixedAlbum.id : "Mixed";
+
+  albumSelect.innerHTML = `<option value="${mixedAlbumId}" selected>Mixed</option>`;
+  uploadAlbumSelect.innerHTML = `<option value="${mixedAlbumId}" selected>Mixed</option>`;
   
   data.forEach(album => {
     const option = `<option value="${album.id}">${album.nama_album}</option>`;
