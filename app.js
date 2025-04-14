@@ -149,11 +149,18 @@ async function loadFiles() {
     li.innerHTML = `
       <div class="flex flex-col space-y-2 max-w-sm w-full rounded-lg mx-auto relative">
         <div class="flex flex-col items-center space-y-1">
+          <button onclick="toggleFavorit('${file.id}', ${file.favorit})" class="absolute top-2 right-2 z-10">
+            ${file.favorit ? `
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            ` : `
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            `}
+          </button>
           ${previewElement}
           <span class="text-white font-medium truncate w-full text-center">${file.nama_file}</span>
-        </div>
-        <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-5 bg-white bg-opacity-50 backdrop-blur-sm p-2 rounded-full">
-        <button onclick="deleteFile('${file.id}', '${file.file_path}')" class="text-red-500 hover:text-red-700">
+          </div>
+          <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-5 bg-white bg-opacity-50 backdrop-blur-sm p-2 rounded-full">
+          <button onclick="deleteFile('${file.id}', '${file.file_path}')" class="text-red-500 hover:text-red-700">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -378,6 +385,21 @@ const filePath = `${Date.now()}_${file.name}`;
   });
 }
 
+async function toggleFavorit(fileId, currentStatus) {
+  const newStatus = !currentStatus;
+  const { error } = await supabase
+    .from("dokumen_files")
+    .update({ favorit: newStatus })
+    .eq("id", fileId);
+
+  if (error) {
+    console.error("Gagal update favorit:", error);
+    alert("Gagal mengubah status favorit.");
+    return;
+  }
+
+  loadFiles(); // Refresh tampilan
+}
 
   toggleViewBtn.addEventListener('click', () => {
     isGridView = !isGridView;
