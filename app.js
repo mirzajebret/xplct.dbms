@@ -110,29 +110,51 @@ console.log('Supabase initialized:', supabase);
 
 async function loadFiles() {
   const albumId = albumSelect.value;
+  const cacheKey = `files_${albumId || 'all'}`;
+  const cacheExpiryKey = `${cacheKey}_expiry`;
+  const cacheExpiryTime = 12 * 60 * 60 * 1000; // 12 hours
+
+  const cachedData = localStorage.getItem(cacheKey);
+  const cacheExpiry = localStorage.getItem(cacheExpiryKey);
+  const now = Date.now();
+
+  if (cachedData && cacheExpiry && now < parseInt(cacheExpiry, 10)) {
+    console.log('Loading files from cache...');
+    renderFiles(JSON.parse(cachedData));
+    return;
+  }
+
+  console.log('Fetching files from Supabase...');
   let query = supabase.from("dokumen_files").select("*").order("tanggal_upload", { ascending: false });
 
-   // ⛔ 
   if (!albumId || albumId === "") {
-    query = query.neq("album_id", "71dd9b79-c381-40d6-b8b7-b7fe183db609"); 
-    query = query.neq("album_id", "9ecd8ffe-36a6-45b5-8849-994a4fbf20cd"); 
+    query = query.neq("album_id", "71dd9b79-c381-40d6-b8b7-b7fe183db609");
+    query = query.neq("album_id", "9ecd8ffe-36a6-45b5-8849-994a4fbf20cd");
   } else {
-    query = query.eq("album_id", albumId); // Jika ada album dipilih, hanya tampilkan album tersebut
+    query = query.eq("album_id", albumId);
   }
 
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error ambil file:', error);
+    console.error('Error fetching files:', error);
     return;
   }
 
+  // Cache the fetched data
+  localStorage.setItem(cacheKey, JSON.stringify(data));
+  localStorage.setItem(cacheExpiryKey, now + cacheExpiryTime);
+
+  renderFiles(data);
+}
+
+function renderFiles(data) {
   fileList.innerHTML = '';
   fileList.className = isGridView ? 'grid grid-cols-2' : 'space-y-2';
 
   data.forEach(file => {
     const li = document.createElement('li');
-    li.className = 'flex flex-col md:flex-row justify-between items-start md:items-end  gap-2';
+    li.className = 'flex flex-col md:flex-row justify-between items-start md:items-end gap-2';
     const filePath = file.file_path;
     const fileExt = filePath.split('.').pop().toLowerCase();
     const customPublicUrl = `${SUPABASE_URL}/storage/v1/object/public/dokumen/${file.file_path}`;
@@ -158,8 +180,8 @@ async function loadFiles() {
           </button>
           ${previewElement}
           <span class="text-white font-medium truncate w-full text-center">${file.nama_file}</span>
-          </div>
-          <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-5 bg-white bg-opacity-50 backdrop-blur-sm p-2 rounded-full">
+        </div>
+        <div class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-5 bg-white bg-opacity-50 backdrop-blur-sm p-2 rounded-full">
           <button onclick="deleteFile('${file.id}', '${file.file_path}')" class="text-red-500 hover:text-red-700">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
