@@ -112,7 +112,7 @@ async function loadFiles() {
   const albumId = albumSelect.value;
   const cacheKey = `files_${albumId || 'all'}`;
   const cacheExpiryKey = `${cacheKey}_expiry`;
-  const cacheExpiryTime = 12 * 60 * 60 * 1000; // 12 hours
+  const cacheExpiryTime = 3 * 60 * 60 * 1000; // 3 hours
 
   const cachedData = localStorage.getItem(cacheKey);
   const cacheExpiry = localStorage.getItem(cacheExpiryKey);
